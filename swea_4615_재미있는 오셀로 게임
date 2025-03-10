@@ -1,0 +1,62 @@
+'''
+보드 사이즈
+4 * 4
+6 * 6
+8 * 8
+가운데 4개의 돌 w 2 b 2 놓고 시작
+흑 백 순으로 번갈아가며 돌을 놓음
+플레이어는 빈 공간에 돌을 놓을 수 있음.
+단 자신이 놓을 돌과 자신의 돌 사이(가로 세로 대각선)에
+상대편의 돌이 있을 경우에만 가능
+이후 사이에 있는 상대편의 돌은 내돌
+'''
+
+t = int(input())
+for tc in range(1,t+1):
+    # n(4 6 8) : 보드의 한 변의 길이, m : 돌을 놓는 횟수
+    n, m = map(int, input().split())
+    
+    lst = [[0] * n for _ in range(n)]
+    
+    # 초기 돌의 값.
+    for i in range(2):
+        j = n // 2 - 1
+        lst[j][j+1], lst[j+1][j] = 1, 1
+        lst[j][j], lst[j+1][j+1] = 2, 2
+    # print (lst)
+    
+    d = [(-1, 0), (1 ,0), (0, -1),
+         (0, 1), (-1,-1), (-1, 1),
+         (1, -1), (1, 1)]
+    
+    # i, j, c 돌을 놓을 위치(i,j), 돌의 색
+    for _ in range(m):
+        x, y, c = map(int, input().split())
+        
+        x -= 1
+        y -= 1
+        lst[y][x] = c
+        
+        # 돌을 놓을 수 있는 조건
+        # 빈공간
+        # 내가 놓을 곳과 이미 둔 자신의 돌 사이에 상대의 돌이 있어야함
+        # 그때 상대의 돌은 내것
+        # 이미 i, j로 놓을 곳을 제시했으니 그 사이에 있는 돌을 내 돌로
+        # 바꾸는 코드만 생각
+        # lst[i][j] 에서 가로 세로 대각선을 탐색해서 돌을 찾는다
+        # lst[i][j] 와 찾은 돌 사이의 돌의 색을 바꾼다
+        
+        for dx, dy in d:
+            nx, ny = x + dx, y + dy
+            flip_stones = []
+            
+            while 0 <= nx < n and 0 <= ny < n:
+                if lst[nx][ny] == 0:
+                    break
+                if lst[nx][ny] == c:
+                    for fx, fy in flip_stones:
+                        lst[fx][fy] = c
+                    break
+                flip_stones((nx,ny))
+                nx += dx
+                ny += dy
